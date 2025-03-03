@@ -18,8 +18,14 @@ export class Server {
   }
 
   async start() {
+    // Middleware
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true })); // x-www-form-urlencoded
+
+    // Routes
     this.app.use(this.routes);
 
+    // Start server
     this.app.listen(this.port, () => {
       console.log(`Server is running on port ${this.port}`);
     });
