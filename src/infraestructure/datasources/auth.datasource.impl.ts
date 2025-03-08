@@ -1,3 +1,4 @@
+import { BcryptAdapter } from "../../config";
 import { UserModel } from "../../data/mongodb";
 import { AuthDatasource, CustomError, RegisterUserDto, UserEntity } from "../../domain";
 
@@ -15,19 +16,17 @@ export class AuthDatasourceImpl implements AuthDatasource {
       if (exists) throw CustomError.badRequest("User already exists");
       
       // 2. Hash del password
-
-
       const user = await UserModel.create({
         name,
         email,
-        password,
+        password: BcryptAdapter.hash(password),
       });
 
       await user.save();
 
       // 3. Mapear la data y crear el usuario
-      return new UserEntity(user.id, name, email, password, user.roles);
-      
+      return new UserEntity(user.id, name, email, user.password, user.roles);
+
       // 4. Crear el JWT
       // 5. Devolver el JWT
 
